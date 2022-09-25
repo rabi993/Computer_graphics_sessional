@@ -1,0 +1,2847 @@
+clp.................319
+object.............652
+move.moti...........672
+composit...........709
+bounchy............805
+move ..............856
+d clk..............1066
+reflk..............1120
+shr................1456
+rtaton.............1673
+scl................2107
+trns...............2478
+/////////////////////////////////////////////DDA Line draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+void plotgraph(int screenWidth,int screenHeight)
+{
+	//plotting grids
+	for(int i=screenWidth/2;i<=screenWidth;i=i+50)
+	{
+		for(int j=screenHeight/2;j<=screenHeight;j=j+50)
+		{
+			setcolor(WHITE);
+			line(0,j,screenWidth,j);
+			line(i,0,i,screenHeight);
+		}
+	}
+	for(int i=screenWidth/2;i>=0;i=i-50)
+	{
+		for(int j=screenHeight/2;j>=0;j=j-50)
+		{
+			setcolor(WHITE);
+			line(0,j,screenWidth,j);
+			line(i,0,i,screenHeight);
+		}
+	}
+	//plotting origin axes
+	setcolor(YELLOW);
+	line(0,screenHeight/2,screenWidth,screenHeight/2);
+	line(screenWidth/2,0,screenWidth/2,screenHeight);
+}
+int main(){
+	
+	float x,y,x0,y0,x1,y1,dx,dy,XIncrement,YIncrement,step;
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	
+	dx=abs(x1-x0);
+	dy=abs(y1-y0);
+	
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	plotgraph(screenWidth,screenHeight);
+	if(dx>dy)
+	{
+		step=dx;
+	}
+	else
+	{
+		step=dy;
+	}
+	
+	XIncrement = (x1-x0)/step;
+	YIncrement = (y1-y0)/step;
+	
+	x=x0;
+	y=y0;
+	
+//	cout<<"x\ty"<<endl;	
+    
+    for(int i=0;i<=step;i++)
+    {
+    //	cout<<(int)(x+0.5)<<"\t"<<(int)(y+0.5)<<endl;//round=(int)(a+0.5)
+    //	cout<<(screenWidth/2)+((int) (x+0.5))<<"\t"<<(screenWidth/2)-((int)(y+0.5))<<endl;
+        putpixel((screenWidth/2)+((int) (x+0.5)),(screenHeight/2)-((int)(y+0.5)),GREEN);
+        
+        outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Starting point");
+        outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "Ending point");
+        outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    	x=x+XIncrement;
+    	y=y+YIncrement;
+	}
+    
+	getch();
+	closegraph();
+	
+
+}
+
+/////////////////////////////////////////////bresenham Line draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,dx,dy,pk;
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	
+	dx=abs(x1-x0);
+	dy=abs(y1-y0);
+	
+	
+	x=x0;
+	y=y0;
+	
+	pk=2*dy-dx;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+//	cout<<"x\ty"<<endl;	
+    
+    for(int i=0;i<=dx;i++)
+    {
+    //	cout<<(int)(x)<<"\t"<<(int)(y)<<endl;
+    //	cout<<(screenWidth/2)+((int) (x))<<"\t"<<(screenWidth/2)-((int)(y))<<endl;
+        putpixel((screenWidth/2)+x,(screenHeight/2)-y,GREEN);
+        
+        if(pk<0)
+        {
+        	x=x+1;
+        	y=y;
+        	pk=pk+2*dy;
+		}
+		else
+		{
+			x=x+1;
+        	y=y+1;
+        	pk=pk+2*dy-2*dx;
+		}
+        
+        outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Starting point");
+        outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "Ending point");
+        outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    	
+	}
+    
+	getch();
+	closegraph();
+	
+
+}
+
+/////////////////////////////////////////////////////////midpoint circle draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	float x,y,r,xc,yc,x1,y1,dx,dy,pk;
+	
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	x=0;
+	y=r;
+	
+	if(r- (int)r==0.0)
+	{
+		pk=1-r;          //initial value of decision parameter pk
+	}
+	else
+	{
+		pk=(5.0/4.0-r);
+	}
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	
+//	cout<<"x\ty"<<endl;	
+    
+    while(x<=y)
+    {
+    
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc+x),GREEN);  
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc-x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc+x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc-x),GREEN);
+        
+        if(pk<0)
+        {
+        	x=x+1;
+        	y=y;
+        	pk=pk+2*x+1;
+		}
+		else
+		{
+			x=x+1;
+        	y=y-1;
+        	pk=pk+2*x+1-2*y;
+		}
+	
+	}
+	
+    //outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Starting point");
+    //outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "Ending point");
+    //outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+	getch();
+	closegraph();
+	
+
+}
+/////////////////////////////////////////////////////midElips
+#include<bits/stdc++.h>
+#include<graphics.h>
+#include<dos.h>
+using namespace std;
+
+int main(){
+
+int gd=DETECT,gm;
+initgraph(&gd,&gm,"c:\\tc\\bgi");
+setbkcolor(WHITE);
+
+float rx,ry,x,y,x0,y0,p1,p2,xc,yc,dx,dy;
+int i;
+
+cout<<"Enter the value of rx and ry: ";
+cin>>rx>>ry;
+cout<<"Enter the value of center point (xc,yc): ";
+cin>>xc>>yc;
+
+//for center=origin (x,y)=(0,ry)
+x=0;
+y=ry;
+
+
+//REGION 1
+
+p1=(ry*ry)-(rx*rx*ry)+(0.25*rx*rx);
+
+dx=2*(ry*ry)*x;
+dy=2*(rx*rx)*y;
+cout<<"p1\t"<<"x\ty"<<endl;
+while(dx < dy)
+{
+    cout<<p1<<"\t"<<(int) xc+x<<"\t"<<(int) yc+y<<endl;
+    
+    putpixel(xc+x,yc+y,RED);
+    putpixel(xc-x,yc+y,RED);
+    putpixel(xc+x,yc-y,RED);
+    putpixel(xc-x,yc-y,RED);
+    if(p1<0){
+    	x=x+1;
+        y=y;
+        dx=dx+(2*ry*ry);
+        p1=p1+dx+(ry*ry);
+    }
+    else{
+        x=x+1;
+        y=y-1;
+        dx = dx + (2 * ry * ry);
+        dy = dy - (2 * rx * rx);
+        p1=p1+dx-dy+(ry*ry);
+        
+        
+    }
+      
+}
+
+//REGION 2  
+p2=(ry*ry)*(x+0.5)*(x+0.5)+(rx*rx)*(y-1)*(y-1)-(rx*rx*ry*ry); 
+
+cout<<"p2\t"<<"x2\ty2"<<endl;
+while(y>=0)
+{
+    cout<<p1<<"\t"<<(int) xc+x<<"\t"<<(int) yc+y<<endl;
+    
+    putpixel(xc+x,yc+y,RED);
+    putpixel(xc-x,yc+y,RED);
+    putpixel(xc+x,yc-y,RED);
+    putpixel(xc-x,yc-y,RED);
+    if(p2>0){
+        x=x;
+        y=y-1;
+        
+        dy = dy - (2 * rx * rx);
+        p2=p2-dy+(rx*rx);
+    }
+    else{
+        x=x+1;
+        y=y-1;
+        dx = dx + (2 * ry * ry);
+        dy = dy - (2 * rx * rx);
+        p2=p2+dx-dy+(rx*rx);
+    }
+    
+
+}
+ 
+getch();
+closegraph();
+}
+/////////////////////////////////////////clipping lineB
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+static int LEFT=1,RIGHT=2,BOTTOM=4,TOP=8,xl,xh,yl,yh;
+void plotgraph(int screenWidth,int screenHeight)
+{
+	setcolor(MAGENTA);
+	
+	for(int i=screenWidth/2;i<=screenWidth;i=i+25)
+	{
+		for(int j=screenHeight/2;j<=screenHeight;j=j+25)
+		{
+			line(0,j,screenWidth,j);
+			line(i,0,i,screenHeight);
+		}
+	}
+		for(int i=screenWidth/2;i>=0;i=i-25)
+	{
+		for(int j=screenHeight/2;j>=0;j=j-25)
+		{
+			line(0,j,screenWidth,j);
+			line(i,0,i,screenHeight);
+		}
+	}
+	setcolor(WHITE);
+	line(0,screenHeight/2,screenWidth,screenHeight/2);
+	line(screenWidth/2,0,screenWidth/2,screenHeight);
+}
+int getcode(int x,int y)
+{
+	int code=0;
+    if(x<xl)code=code | LEFT;
+	if(x>xh)code=code | RIGHT;
+	if(y<yl)code=code | BOTTOM;
+	if(y>yh)code=code | TOP;
+	
+	return code;	
+}
+int main()
+{
+	int gd=DETECT,gm;
+	
+	//window initialization and size measurements
+	int screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	int screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"Line Clipping",-3,-3);
+	
+	plotgraph(screenWidth,screenHeight);
+	
+	float x1,y1,x2,y2;
+	setcolor(YELLOW);
+	cout<<"Enter bottom-left and upper-right coordinates of the window: ";
+	cin>>xl>>yl>>xh>>yh;
+	cout<<"Enter coordinates of the line: ";
+	cin>>x1>>y1>>x2>>y2;	
+		
+	int code1=getcode(x1,y1);
+	int code2=getcode(x2,y2);
+	
+	setlinestyle(0,0,2);
+	rectangle((screenWidth/2)+xl,(screenHeight/2)-yl,(screenWidth/2)+xh,(screenHeight/2)-yh);
+	
+	setcolor(GREEN);
+	setlinestyle(0,0,2);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	
+	int accept=0;
+	while(1){
+		float m=(float) (y2-y1)/(x2-x1);
+		if(code1==0 && code2==0)
+		{
+	    	accept=1;
+	    	break;
+		}
+		else if((code1 & code2)!=0)
+		{
+			outtextxy(screenWidth/2+x1,screenHeight/2-y1,"Not a clipping case");
+			break;
+		}
+		else
+		{
+			int x,y;
+			int temp;
+			
+			if(code1==0)
+			{
+				temp=code2;
+			}
+			else
+			{
+				temp=code1;
+			}
+			
+			if(temp & TOP)
+			{
+				x=	x1+(yh-y1)/m;
+				y=  yh;
+			}
+			else if(temp & BOTTOM)
+			{
+				x=	x1+(yl-y1)/m;
+				y=  yl;
+			}
+			else if(temp & LEFT)
+			{
+				x=	xl;
+				y=  yl+(xl-x1)*m;
+			}
+			else if(temp & RIGHT)
+			{
+				x=	xh;
+				y=  y1+(xh-x1)*m;
+			}
+			
+			if(code1==temp)
+			{
+				x1=x;
+				y1=y;
+				code1=getcode(x1,y1);
+				
+			}
+			else
+			{
+				x2=x;
+				y2=y;
+				code2=getcode(x2,y2);	
+			}
+				
+		}
+    	}
+	setcolor(WHITE);
+	
+	if(accept==1)
+	{
+		setlinestyle(0,0,2);  //line thickness increase
+		line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+		outtextxy((screenWidth/2)+x2+100,(screenHeight/2)-y2-30,"After clipping: white ");
+		getch();
+	}
+	getch();
+	closegraph();
+	
+	
+	return 0;
+}
+///////////////////////////////////////////////////clipping polygonB
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+#define round(a) ((int)(a+0.5))
+int k;
+float xmin,ymin,xmax,ymax,arr[20],m;
+void clipl(float x1,float y1,float x2,float y2)
+{
+    if(x2-x1)
+        m=(y2-y1)/(x2-x1);
+    else
+        m=100000;
+    if(x1 >= xmin && x2 >= xmin)
+    {
+        arr[k]=x2;
+        arr[k+1]=y2;
+        k+=2;
+    }
+    if(x1 < xmin && x2 >= xmin)
+    {
+        arr[k]=xmin;
+        arr[k+1]=y1+m*(xmin-x1);
+        arr[k+2]=x2;
+        arr[k+3]=y2;
+        k+=4;
+    }
+    if(x1 >= xmin  && x2 < xmin)
+    {
+        arr[k]=xmin;
+        arr[k+1]=y1+m*(xmin-x1);
+        k+=2;
+    }
+}
+
+void clipt(float x1,float y1,float x2,float y2)
+{
+    if(y2-y1)
+        m=(x2-x1)/(y2-y1);
+    else
+        m=100000;
+    if(y1 <= ymax && y2 <= ymax)
+    {
+        arr[k]=x2;
+        arr[k+1]=y2;
+        k+=2;
+    }
+    if(y1 > ymax && y2 <= ymax)
+    {
+        arr[k]=x1+m*(ymax-y1);
+        arr[k+1]=ymax;
+        arr[k+2]=x2;
+        arr[k+3]=y2;
+        k+=4;
+    }
+    if(y1 <= ymax  && y2 > ymax)
+    {
+        arr[k]=x1+m*(ymax-y1);
+        arr[k+1]=ymax;
+        k+=2;
+    }
+}
+
+void clipr(float x1,float y1,float x2,float y2)
+{
+    if(x2-x1)
+        m=(y2-y1)/(x2-x1);
+    else
+        m=100000;
+    if(x1 <= xmax && x2 <= xmax)
+    {
+        arr[k]=x2;
+        arr[k+1]=y2;
+        k+=2;
+    }
+    if(x1 > xmax && x2 <= xmax)
+    {
+        arr[k]=xmax;
+        arr[k+1]=y1+m*(xmax-x1);
+        arr[k+2]=x2;
+        arr[k+3]=y2;
+        k+=4;
+    }
+    if(x1 <= xmax  && x2 > xmax)
+    {
+        arr[k]=xmax;
+        arr[k+1]=y1+m*(xmax-x1);
+        k+=2;
+    }
+}
+
+void clipb(float x1,float y1,float x2,float y2)
+{
+    if(y2-y1)
+        m=(x2-x1)/(y2-y1);
+    else
+        m=100000;
+    if(y1 >= ymin && y2 >= ymin)
+    {
+        arr[k]=x2;
+        arr[k+1]=y2;
+        k+=2;
+    }
+    if(y1 < ymin && y2 >= ymin)
+    {
+        arr[k]=x1+m*(ymin-y1);
+        arr[k+1]=ymin;
+        arr[k+2]=x2;
+        arr[k+3]=y2;
+        k+=4;
+    }
+    if(y1 >= ymin  && y2 < ymin)
+    {
+        arr[k]=x1+m*(ymin-y1);
+        arr[k+1]=ymin;
+        k+=2;
+    }
+}
+ 
+int main()
+{
+    int gdriver=DETECT,gmode,n,poly[20],i;
+    float xi,yi,xf,yf,polyy[20];
+    initgraph(&gdriver,&gmode,"C:\\TC\\BGI");
+    //clrscr();
+   // cout<<"Coordinates of rectangular clip window :\nxmin,ymin             :";
+   // cin>>xmin>>ymin;
+   // cout<<"xmax,ymax             :";
+   // cin>>xmax>>ymax;
+    xmin=100;
+    ymin=100;
+    xmax=400;
+    ymax=400;
+    cout<<"\n\nPolygon to be clipped :\nNumber of sides       :";
+    cin>>n;
+    cout<<"Enter the coordinates :";
+    for( i=0;i < 2*n;i++)
+		cin>>polyy[i];
+    polyy[i]=polyy[0];
+    polyy[i+1]=polyy[1];
+    for(i=0;i < 2*n+2;i++)
+		poly[i]=round(polyy[i]);
+    
+    setcolor(RED);
+    rectangle(xmin,ymax,xmax,ymin);
+    cout<<"\t\tUNCLIPPED POLYGON";
+    setcolor(WHITE);
+    fillpoly(n,poly);
+	getch();
+    cleardevice();
+    k=0;
+    for(i=0;i < 2*n;i+=2)
+		clipl(polyy[i],polyy[i+1],polyy[i+2],polyy[i+3]);
+    n=k/2;
+    for(i=0;i < k;i++)
+		polyy[i]=arr[i];
+    polyy[i]=polyy[0];
+    polyy[i+1]=polyy[1];
+    k=0;
+    for(i=0;i < 2*n;i+=2)
+		clipt(polyy[i],polyy[i+1],polyy[i+2],polyy[i+3]);
+    n=k/2;
+    for(i=0;i < k;i++)
+		polyy[i]=arr[i];
+    polyy[i]=polyy[0];
+    polyy[i+1]=polyy[1];
+    k=0;
+    for(i=0;i < 2*n;i+=2)
+		clipr(polyy[i],polyy[i+1],polyy[i+2],polyy[i+3]);
+    n=k/2;
+    for(i=0;i < k;i++)
+		polyy[i]=arr[i];
+    polyy[i]=polyy[0];
+    polyy[i+1]=polyy[1];
+    k=0;
+    for(i=0;i < 2*n;i+=2)
+		clipb(polyy[i],polyy[i+1],polyy[i+2],polyy[i+3]);
+    for(i=0;i < k;i++)
+		poly[i]=round(arr[i]);
+    if(k)
+		fillpoly(k/2,poly);
+    setcolor(RED);
+    rectangle(xmin,ymax,xmax,ymin);
+    cout<<"\tCLIPPED POLYGON";
+    getch();
+    closegraph();
+}
+///////////////////////////////////////////////object filling with color
+//object filling
+#include<bits/stdc++.h>
+#include<graphics.h>
+
+int main()
+{
+	int gd=DETECT,gm;
+	
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	setcolor(RED);
+	setfillstyle(SOLID_FILL,RED);
+	circle(100,100,50);
+	floodfill(100,100,RED);
+	
+
+	getch();
+	closegraph();
+}
+/////////////////////////////////////////////////move motin ball
+#include <stdio.h>
+#include <graphics.h>
+#include <conio.h>
+#include <dos.h>
+ 
+int main() {
+    int gd = DETECT, gm;
+    int i, maxx, midy;
+ 
+    /* initialize graphic mode */
+    initgraph(&gd, &gm, (char*)"");
+    /* maximum pixel in horizontal axis */
+    maxx = getmaxx();
+    /* mid pixel in vertical axis */
+    midy = getmaxy()/2;
+ 
+    for (i=0; i <=550; i=i+5) {
+        delay(100);
+        /* clears screen */
+        cleardevice();
+ 
+  
+        circle(i,130,100);
+        
+        /* draw a white road */
+        setcolor(GREEN);
+        line(0, midy , maxx, midy );
+ 
+        /* Add delay of 0.1 milli seconds */
+    }
+ 
+    getch();
+    closegraph();
+    return 0;
+}
+
+//////////////////////////////////////Composit two successive Scaling of line u
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,sx1,sx2,sy1,sy2;
+	int i;
+
+	cout<<"Enter the value of starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of scaling factor (sx1,sy1): ";
+	cin>>sx1>>sy1;
+  	cout<<"Enter the value of scaling factor (sx2,sy2): ";
+	cin>>sx2>>sy2;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	//line before scaling
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before scaling");
+	//calculating the scaled coordinates
+	x0=x0*sx1*sx2;
+	y0=y0*sy1*sy2;
+	x1=x1*sx1*sx2;;
+	y1=y1*sy1*sy2;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After scaling");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+///////////////////////////////////////////composite succeessive translation
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,tx1,ty1,tx2,ty2;
+	int i;
+
+	cout<<"Enter the value of starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of translation factor (tx1,ty1): ";
+	cin>>tx1>>ty1;
+	cout<<"Enter the value of translation factor (tx2,ty2): ";
+	cin>>tx2>>ty2;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	//line before translation
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before translation");
+	//calculating the translated coordinates
+	x0=x0+(tx1+tx2);
+	y0=y0+(ty1+ty2);
+	x1=x1+(tx1+tx2);
+	y1=y1+(ty1+ty2);
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After translation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+//////////////////////////////////////////Bouncy
+#include<dos.h>
+#include<iostream>
+#include<graphics.h>
+#include<math.h>
+#include<conio.h>
+# include <unistd.h>
+int main()
+{
+
+   int gd=DETECT,gm;
+   initgraph(&gd,&gm,"");
+   float x=1,y=0.00000,j=.5,count=.1;
+   float r=15;
+   setcolor(14);
+   line(150, 200, 450, 200);
+    sleep(1);
+    for(int k=0;k<=7;k++)
+     {
+
+      for(float i=90;i<270;i+=10)
+       {
+ y=cos(((i*22/7)/290))/j;
+
+
+
+
+if(y>0)
+y=-y;
+x+=5;
+
+setcolor(14);
+setfillstyle(1,14);
+circle(x,y*100+200,r);
+floodfill(x,y*100+200,14);
+
+       delay(100);
+
+setcolor(0);
+setfillstyle(1,0);
+circle(x,y*100+200,r);
+floodfill(x,y*100+200,0);
+
+       }
+
+      j+=count;
+      count+=.1;
+
+     }
+   getch();
+}
+////////////////////////////////////////////////////move ball sine
+#include <iostream>
+
+#include <graphics.h>
+
+#include <math.h>
+
+#include <conio.h>
+
+using namespace std;
+
+void draw_wave()
+{
+	int x,y;
+	line(0,300,getmaxx(),300);
+
+    line(400,0,400,getmaxy());
+
+    float pi = 3.14;
+	for(int i = -360; i < 360 ; i++)
+
+    {
+
+        x = (int) 400+i;
+
+        y = (int) 300 - sin(i*pi/180)*25;
+
+        putpixel(x,y,WHITE);
+
+    }
+}
+int main()
+
+{
+
+    initwindow(800,600);
+	int x,y;
+	float pi = 3.14;
+	
+    draw_wave();
+
+	for(int i = -360; i < 360 ; i=i+5)
+
+    {
+
+        x = (int) 400+i;
+
+        y = (int) 300 - sin(i*pi/180)*25;
+        
+        circle(x,y,20);
+        
+        delay(200);
+        cleardevice();
+        draw_wave();
+		
+
+    }
+    
+    getch();
+
+    closegraph();
+
+    return 0;
+
+}
+////////////////////////////////////////////////mov ball cos
+#include <iostream>
+
+#include <graphics.h>
+
+#include <math.h>
+
+#include <conio.h>
+
+using namespace std;
+
+void draw_wave()
+{
+	int x,y;
+	line(0,300,getmaxx(),300);
+
+    line(400,0,400,getmaxy());
+
+    float pi = 3.14;
+	for(int i = -360; i < 360 ; i++)
+
+    {
+
+        x = (int) 400+i;
+
+        y = (int) 300 - cos(i*pi/180)*25;
+
+        putpixel(x,y,WHITE);
+
+    }
+}
+int main()
+
+{
+
+    initwindow(800,600);
+	int x,y;
+	float pi = 3.14;
+	
+    draw_wave();
+
+	for(int i = -360; i < 360 ; i=i+5)
+
+    {
+
+        x = (int) 400+i;
+
+        y = (int) 300 - 25*cos(i*3.141/180);
+        
+        circle(x,y,20);
+        
+        delay(200);
+        cleardevice();
+        draw_wave();
+		
+
+    }
+    
+    getch();
+
+    closegraph();
+
+    return 0;
+
+}
+////////////////////////////////////////////move circle line B
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	//clrscr();
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"Window",1,1);
+	
+	//graph plotting function call
+    plotgraph(screenWidth,screenHeight);
+	float r,xc,yc,tx,ty,sx0,sy0,sx1,sy1;
+	int i,x=0,y=0;
+
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	cout<<"Enter the coordinates of straight line (sx0,sy0) and (sx1,sy1): ";
+	cin>>sx0>>sy0>>sx1>>sy1;
+
+	//line before translation
+	setcolor(GREEN);
+	setlinestyle(0,0,2);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	
+	
+ //   outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "Before translation");
+	//calculating the translated coordinates
+    
+
+    x=sx0;
+    y=sy0;
+	while(1){
+		
+		plotgraph(screenWidth,screenHeight);
+		
+		if(x>=sx1 || y>=sy1)
+		 { 
+		  cleardevice();
+		  break;
+	    }
+	    
+		x=x+20;
+		y=y+20;
+	    setcolor(WHITE);
+	    setlinestyle(0,0,2);
+	    line((screenWidth/2)+sx0,(screenHeight/2)-sy0,(screenWidth/2)+sx1,(screenHeight/2)-sy1);
+		xc=x;
+		yc=y;
+		
+		setcolor(GREEN);
+		circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+		delay(1000);
+		cleardevice();
+		
+
+    }
+        setcolor(WHITE);
+	    setlinestyle(0,0,2);
+	    line((screenWidth/2)+sx0,(screenHeight/2)-sy0,(screenWidth/2)+sx1,(screenHeight/2)-sy1);
+		xc=sx1;
+		yc=sy1;
+		
+		setcolor(GREEN);
+		circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+        plotgraph(screenWidth,screenHeight);
+   
+    //outtextxy((screenWidth/2)+xc+60,(screenHeight/2)-yc-10, "After translation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+////////////////////////////////////////////////////digital clock
+// C program toc draw the pendulum clock
+#include <bits/stdc++.h>
+#include <time.h>
+#include <graphics.h>
+
+
+// Driver Code
+int main()
+{
+	int gd = DETECT, gm;
+	long current_time;
+    char timeStr[256];
+    int midx, midy;
+	// Initialize of gdriver
+	initgraph(&gd, &gm, "C:\\turboc3\\bgi");
+	
+ /* mid pixel in horizontal and vertical axis */
+    midx = getmaxx() / 2;
+    midy = getmaxy() / 2;
+
+    while (!kbhit()) {
+        cleardevice();
+        setcolor(WHITE);
+        setfillstyle(HATCH_FILL, BLUE);
+	    rectangle(midx - 250, midy - 40, midx + 250, midy + 40);
+        floodfill(midx,midy,WHITE);
+        
+        
+        setfillstyle(LTSLASH_FILL, BROWN);
+        // Clock inner Outline
+	    rectangle((midx - 250)+5, (midy - 40)+5,(midx + 250)-5, (midy + 40)-5);
+        //floodfill(midx, midy, BROWN);
+        /* Get Current epoch time in seconds */
+       current_time = time(NULL);
+        /* store the date and time in string */
+        strcpy(timeStr, ctime(&current_time));
+        setcolor(RED);
+        settextjustify(CENTER_TEXT, CENTER_TEXT);
+        settextstyle(SANS_SERIF_FONT, HORIZ_DIR, 4);
+ 
+        moveto(midx, midy+10);
+        /* print current time */
+         outtext(timeStr);
+        /* Add delay of 1000 milliseconds(1 second) */
+        delay(1000);
+    }
+
+	// Hold the screen for a while
+	getch();
+
+	// Close the initialized gdriver
+	closegraph();
+}
+ ///////////////////////////////////////////////////Reflection Line simple draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,x2,x3,x4,x5,y2,y3,y4,y5;
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	
+	//before reflection
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before reflection");
+    
+    //reflection on x-axis
+    x2=x0;
+    y2=-y0;
+    x3=x1;
+    y3=-y1;
+    
+    setcolor(GREEN);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x3,(screenHeight/2)-y3);    
+    outtextxy((screenWidth/2)+x3+10,(screenHeight/2)-y3-10, "x-axis reflection");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    //reflection on y-axis
+    x4=-x0;
+    y4=y0;
+    x5=-x1;
+    y5=y1;
+    
+    setcolor(GREEN);
+	line((screenWidth/2)+x4,(screenHeight/2)-y4,(screenWidth/2)+x5,(screenHeight/2)-y5);    
+    outtextxy((screenWidth/2)+x5+10,(screenHeight/2)-y5-10, "y-axis reflection");
+	getch();
+	closegraph();
+	
+
+}
+//////////////////////////////////////////DDA Line draw//reflection
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,dx,dy,XIncrement,YIncrement,step;
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	
+	dx=abs(x1-x0);
+	dy=abs(y1-y0);
+	
+	if(dx>dy)
+	{
+		step=dx;
+	}
+	else
+	{
+		step=dy;
+	}
+	
+	XIncrement = (x1-x0)/step;
+	YIncrement = (y1-y0)/step;
+	
+	x=x0;
+	y=y0;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+//	cout<<"x\ty"<<endl;	
+    
+    for(int i=0;i<=step;i++)
+    {
+    //	cout<<(int)(x+0.5)<<"\t"<<(int)(y+0.5)<<endl;//round=(int)(a+0.5)
+    //	cout<<(screenWidth/2)+((int) (x+0.5))<<"\t"<<(screenWidth/2)-((int)(y+0.5))<<endl;
+        putpixel((screenWidth/2)+((int) (x+0.5)),(screenHeight/2)-((int)(y+0.5)),GREEN);
+        
+        outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "before reflection");
+        
+        //x-axis reflection
+        setcolor(BLUE);
+        putpixel((screenWidth/2)+((int) (x+0.5)),(screenHeight/2)-((int)(-y+0.5)),BLUE);
+        outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-(-y1)-10, "after reflection");
+        outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    	x=x+XIncrement;
+    	y=y+YIncrement;
+	}
+    
+	getch();
+	closegraph();
+	
+
+}
+/////////////////////////////////reflection circle simple draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float r,xc,yc;
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	//before reflection
+	setcolor(BLUE);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "Before reflection");
+    
+    //x-axis reflection
+    xc=xc;
+    yc=-yc;
+    
+    setcolor(GREEN);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);    
+    outtextxy((screenWidth/2)+xc+10,(screenHeight/2)-yc-10, "x-axis reflection");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+    
+    /*
+    //y-axis reflection
+    xc=-xc;
+    yc=yc;
+    
+    setcolor(RED);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);    
+    outtextxy((screenWidth/2)+xc+10,(screenHeight/2)-yc-10, "y-axis reflection");
+   */
+	getch();
+	closegraph();
+	
+
+}
+////////////////////////////////////////////midpoint circle draw
+//reflection 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	float x,y,r,xc,yc,x1,y1,dx,dy,pk;
+	
+	
+	
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	
+	x=0;
+	y=r;
+	
+	if(r- (int)r==0.0)
+	{
+		pk=1-r;          //initial value of decision parameter pk
+	}
+	else
+	{
+		pk=(5.0/4.0-r);
+	}
+	
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	
+//	cout<<"x\ty"<<endl;	
+    
+    while(x<=y)
+    {
+        setcolor(GREEN);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc+x),GREEN);  
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc-x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc+x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc-x),GREEN);
+        
+        //reflection x-axis
+        //x=x,y=-y
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(-yc+y),BLUE);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(-yc-y),BLUE);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(-yc+y),BLUE);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(-yc-y),BLUE);
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(-yc+x),BLUE);  
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(-yc-x),BLUE);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(-yc+x),BLUE);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(-yc-x),BLUE);
+        
+        if(pk<0)
+        {
+        	x=x+1;
+        	y=y;
+        	pk=pk+2*x+1;
+		}
+		else
+		{
+			x=x+1;
+        	y=y-1;
+        	pk=pk+2*x+1-2*y;
+		}
+	
+	}
+	
+    outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "before reflection");
+   
+    
+    setcolor(BLUE);
+    outtextxy((screenWidth/2)+(xc+x)+10,(screenHeight/2)-(-yc+y)-10, "after reflection(x-axis)");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+	getch();
+	closegraph();
+	
+
+}
+/////////////////////////////////////////////////Reflection triangle simple draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	float x,y,x0,y0,x1,y1,x2,y2;
+	
+	
+	
+	
+	cout<<"Enter the value of first point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of second point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of third point (x2,y2): ";
+	cin>>x2>>y2;;
+	
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	//before reflection
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before rotation");
+    
+    //reflection on x-axis
+    x0=x0;
+    y0=-y0;
+    x1=x1;
+    y1=-y1;
+    x2=x2;
+    y2=-y2;
+    
+    setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);   
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "x-axis reflection");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+    
+    /*
+    //reflection on y-axis
+    x0=-x0;
+    y0=y0;
+    x1=-x1;
+    y1=y1;
+    x2=-x2;
+    y2=y2;
+    
+    setcolor(RED);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);   
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "y-axis reflection");
+    */
+ 
+	getch();
+	closegraph();
+	
+
+}
+//////////////////////////////////////////////////////Shearing of line using line starting and ending points
+
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,shx,shy;
+	int i;
+
+	cout<<"Enter the value of starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of shearing parameter (shx,shy): ";
+	cin>>shx>>shy;
+	
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	//line before shearing
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before shearing");
+    
+    //shearing on x-axis
+	//calculating the sheared coordinates
+	x0=x0+shx*y0;
+	y0=y0;
+	x1=x1+shx*y1;
+	y1=y1;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After shearing(x-axis)");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+    
+    /*
+    //shearing on y-axis
+	//calculating the sheared coordinates
+	x0=x0;
+	y0=y0+shy*x0;
+	x1=x1;
+	y1=y1+shy*x1;
+
+	setcolor(RED);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After shearing(y-axis)");
+    */
+	getch();
+	closegraph();
+}
+//////////////////////////////////////DDA Line draw//shearing
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	float x,y,x0,y0,x1,y1,dx,dy,XIncrement,YIncrement,step,shx,shy;
+	
+	//graphics driver
+	
+	
+	//dda algorithm
+	
+	
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of shearing parameter (shx,shy): ";
+	cin>>shx>>shy;
+	
+	dx=abs(x1-x0);
+	dy=abs(y1-y0);
+	
+	if(dx>dy)
+	{
+		step=dx;
+	}
+	else
+	{
+		step=dy;
+	}
+	
+	XIncrement = (x1-x0)/step;
+	YIncrement = (y1-y0)/step;
+	
+	x=x0;
+	y=y0;
+
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+//	cout<<"x\ty"<<endl;	
+    
+    for(int i=0;i<=step;i++)
+    {
+
+        setcolor(GREEN);
+        putpixel((screenWidth/2)+((int) (x+0.5)),(screenHeight/2)-((int)(y+0.5)),GREEN);
+        
+        outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "before shearing");
+        
+        //shearing x-axis
+        setcolor(BLUE);
+        putpixel((screenWidth/2)+((int) (x+shx*y)),(screenHeight/2)-((int)(y)),BLUE);
+        outtextxy((screenWidth/2)+x1+shx*y1+10,(screenHeight/2)-y1-10, "after shearing(x-axis)");
+        outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    	x=x+XIncrement;
+    	y=y+YIncrement;
+	}
+    
+	getch();
+	closegraph();
+	
+
+}
+///////////////////////////////////////////Shearing of triangle 
+
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,x2,y2,shx,shy;
+	int i;
+
+	cout<<"Enter the value of first point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of second point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of third point (x2,y2): ";
+	cin>>x2>>y2;
+	cout<<"Enter the value of shearing parameter (shx,shy): ";
+	cin>>shx>>shy;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//triangle before shearing
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before shearing");
+    
+    //shearing 0n x-direction
+	//calculating the scaled coordinates
+	x0=x0+shx*y0;
+	y0=y0;
+	x1=x1+shx*y1;
+	y1=y1;
+	x2=x2+shx*y2;
+	y2=y2;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After shearing(x-axis)");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+    
+    /*
+    //shearing 0n y-direction
+	//calculating the scaled coordinates
+	x0=x0;
+	y0=y0+shy*x0;
+	x1=x1;
+	y1=y1+shy*x1;
+	x2=x2;
+	y2=y2+shy*x2;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After shearing(y-axis)");
+   
+    */
+    
+	getch();
+	closegraph();
+}
+/////////////////////////////////////////////////Rotation Line draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,xa,xb,ya,yb,angle,radian;
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the rotation angle a: ";
+	cin>>angle;
+	
+	radian=3.14/180;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+		
+	
+	//before rotation
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before rotation");
+    
+    //after rotation
+    xa=x0*cos(angle*radian)-y0*sin(angle*radian);
+    ya=x0*sin(angle*radian)+y0*cos(angle*radian);
+    xb=x1*cos(angle*radian)-y1*sin(angle*radian);
+    yb=x1*sin(angle*radian)+y1*cos(angle*radian);
+    
+    setcolor(GREEN);
+	line((screenWidth/2)+xa,(screenHeight/2)-ya,(screenWidth/2)+xb,(screenHeight/2)-yb);    
+    outtextxy((screenWidth/2)+xa+10,(screenHeight/2)-yb-10, "After rotation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+	
+
+}
+//////////////////////////////////////////////Rotation Line from pivot point draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,xr,yr,xa,xb,ya,yb,angle,radian;
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the pivot point (xr,yr): ";
+	cin>>xr>>yr;
+	cout<<"Enter the rotation angle a: ";
+	cin>>angle;
+	
+	radian=3.14/180;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	//before rotation
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before rotation");
+    
+    //after rotation
+    xa=xr+(x0-xr)*cos(angle*radian)-(y0-yr)*sin(angle*radian);
+    ya=yr+(x0-xr)*sin(angle*radian)+(y0-yr)*cos(angle*radian);
+    xb=xr+(x1-xr)*cos(angle*radian)-(y1-yr)*sin(angle*radian);
+    yb=yr+(x1-xr)*sin(angle*radian)+(y1-yr)*cos(angle*radian);
+    
+    setcolor(GREEN);
+	line((screenWidth/2)+xa,(screenHeight/2)-ya,(screenWidth/2)+xb,(screenHeight/2)-yb);    
+    outtextxy((screenWidth/2)+xb+10,(screenHeight/2)-yb-10, "After rotation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+    
+    //drawing the pivot point as circle for visualization
+    setcolor(YELLOW);
+    circle((screenWidth/2)+xr,(screenHeight/2)-yr,3);
+    
+    //drawing the pivot point as filled circle for visualization
+    setfillstyle(SOLID_FILL,YELLOW);
+    setcolor(YELLOW);
+    circle((screenWidth/2)+xr,(screenHeight/2)-yr,3);
+    outtextxy((screenWidth/2)+xr+5,(screenHeight/2)-yr+5, "pivot");
+    floodfill((screenWidth/2)+xr,(screenHeight/2)-yr,YELLOW);
+    
+	getch();
+	closegraph();
+	
+
+}
+///////////////////////////////////////////////////DDA //rotation of that line
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,dx,dy,XIncrement,YIncrement,step,angle,radian;
+	
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the rotation angle a: ";
+	cin>>angle;
+	
+	radian=(3.14/180);
+	
+	dx=abs(x1-x0);
+	dy=abs(y1-y0);
+	
+	if(dx>dy)
+	{
+		step=dx;
+	}
+	else
+	{
+		step=dy;
+	}
+	
+	XIncrement = (x1-x0)/step;
+	YIncrement = (y1-y0)/step;
+	
+	x=x0;
+	y=y0;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+//	cout<<"x\ty"<<endl;	
+    
+    for(int i=0;i<=step;i++)
+    {
+    	setcolor(GREEN);
+        putpixel((screenWidth/2)+((int) (x+0.5)),(screenHeight/2)-((int)(y+0.5)),GREEN);
+        
+        outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "original line");
+        
+        setcolor(BLUE);
+        putpixel((screenWidth/2)+(((int) (x+0.5))*cos(angle*radian)-((int)(y+0.5))*sin(angle*radian)),(screenHeight/2)-(((int) (x+0.5))*sin(angle*radian)+((int)(y+0.5))*cos(angle*radian)),BLUE); //rotation with rotatin angle
+        outtextxy((screenWidth/2)+(((int) (x1+0.5))*cos(angle*radian)-((int)(y1+0.5))*sin(angle*radian)),(screenHeight/2)-(((int) (x1+0.5))*sin(angle*radian)+((int)(y1+0.5))*cos(angle*radian)), "rotated line");
+        
+        outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    	x=x+XIncrement;
+    	y=y+YIncrement;
+	}
+    
+	getch();
+	closegraph();
+	
+
+}
+////////////////////////////////////////////Rotation circle simple  draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float r,xc,yc,xa,ya,angle,radian;
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	cout<<"Enter the rotation angle a: ";
+	cin>>angle;
+	
+	radian=3.14/180;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	
+	//before rotation
+	setcolor(GREEN);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "Before rotation");
+    
+    //after rotation
+    xa=xc*cos(angle*radian)-yc*sin(angle*radian);
+    ya=xc*sin(angle*radian)+yc*cos(angle*radian);
+    
+    setcolor(GREEN);
+	circle((screenWidth/2)+xa,(screenHeight/2)-ya,r);    
+    outtextxy((screenWidth/2)+xa+10,(screenHeight/2)-ya-10, "After rotation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+	
+
+}
+///////////////////////////////////////////Rotation Line from pivot point draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float r,xc,yc,xr,yr,xa,ya,angle,radian;
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	cout<<"Enter the pivot point (xr,yr): ";
+	cin>>xr>>yr;
+	cout<<"Enter the rotation angle a: ";
+	cin>>angle;
+	
+	radian=3.14/180;
+
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	
+	//before rotation
+	setcolor(GREEN);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "Before rotation");
+    
+    //after rotation
+    xa=xr+(xc-xr)*cos(angle*radian)-(yc-yr)*sin(angle*radian);
+    ya=yr+(xc-xr)*sin(angle*radian)+(yc-yr)*cos(angle*radian);
+    
+    setcolor(GREEN);
+	circle((screenWidth/2)+xa,(screenHeight/2)-ya,r);    
+    outtextxy((screenWidth/2)+xa+10,(screenHeight/2)-ya-10, "After rotation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    //drawing the pivot point as filled circle for visualization
+    setfillstyle(SOLID_FILL,YELLOW);
+    setcolor(YELLOW);
+    circle((screenWidth/2)+xr,(screenHeight/2)-yr,3);
+    outtextxy((screenWidth/2)+xr+5,(screenHeight/2)-yr+5, "pivot");
+    floodfill((screenWidth/2)+xr,(screenHeight/2)-yr,YELLOW);
+    
+	getch();
+	closegraph();
+	
+
+}
+/////////////////////////////////////////midpoint circle//rotation 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,r,xc,yc,x1,y1,dx,dy,pk,radian,angle;
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	cout<<"Enter the rotation angle a: ";
+	cin>>angle;
+	
+	radian=angle*3.14/180;
+	x=0;
+	y=r;
+	
+	if(r- (int)r==0.0)
+	{
+		pk=1-r;          //initial value of decision parameter pk
+	}
+	else
+	{
+		pk=(5.0/4.0-r);
+	}
+
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	
+	
+//	cout<<"x\ty"<<endl;	
+    
+    while(x<=y)
+    {
+        setcolor(GREEN);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc+x),GREEN);  
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc-x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc+x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc-x),GREEN);
+        
+        //rotation
+        //there's something wrong ***************************************************
+        /*
+        putpixel((screenWidth/2)+(xc+x)*cos(radian)-(yc+y)*sin(radian),(screenHeight/2)-(xc+x)*sin(radian)+(yc+y)*cos(radian),BLUE);
+        putpixel((screenWidth/2)+(xc+x)*cos(radian)-(yc-y)*sin(radian),(screenHeight/2)-(xc+x)*sin(radian)+(yc-y)*cos(radian),BLUE);
+        putpixel((screenWidth/2)+(xc-x)*cos(radian)-(yc+y)*sin(radian),(screenHeight/2)-(xc-x)*sin(radian)+(yc+y)*cos(radian),BLUE);
+        putpixel((screenWidth/2)+(xc-x)*cos(radian)-(yc-y)*sin(radian),(screenHeight/2)-(xc-x)*sin(radian)+(yc-y)*cos(radian),BLUE);
+        putpixel((screenWidth/2)+(xc+y)*cos(radian)-(yc+x)*sin(radian),(screenHeight/2)-(xc+y)*sin(radian)+(yc+x)*cos(radian),BLUE);
+        putpixel((screenWidth/2)+(xc+y)*cos(radian)-(yc-x)*sin(radian),(screenHeight/2)-(xc+y)*sin(radian)+(yc-x)*cos(radian),BLUE);
+        putpixel((screenWidth/2)+(xc-y)*cos(radian)-(yc+x)*sin(radian),(screenHeight/2)-(xc-y)*sin(radian)+(yc+x)*cos(radian),BLUE);
+        putpixel((screenWidth/2)+(xc-y)*cos(radian)-(yc-x)*sin(radian),(screenHeight/2)-(xc-y)*sin(radian)+(yc-x)*cos(radian),BLUE);
+        */
+        
+        if(pk<0)
+        {
+        	x=x+1;
+        	y=y;
+        	pk=pk+2*x+1;
+		}
+		else
+		{
+			x=x+1;
+        	y=y-1;
+        	pk=pk+2*x+1-2*y;
+		}
+	
+	}
+	
+    outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "before rotation");
+   
+    
+    setcolor(BLUE);
+    outtextxy((screenWidth/2)+(xc+x)*cos(radian)-(yc+y)*sin(radian)+10,(screenHeight/2)-(xc+x)*sin(radian)+(yc+y)*cos(radian)-10, "after rotation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+	getch();
+	closegraph();
+	
+
+}
+////////////////////////////////////////////////////Rotation triangle draw
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,x2,y2,xa,xb,xc,ya,yb,yc,angle,radian;
+	cout<<"Enter the value of first point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of second point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of third point (x2,y2): ";
+	cin>>x2>>y2;;
+	cout<<"Enter the rotation angle a: ";
+	cin>>angle;
+	
+	radian=3.14/180;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	
+	//before rotation
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before rotation");
+    
+    //after rotation
+    xa=x0*cos(angle*radian)-y0*sin(angle*radian);
+    ya=x0*sin(angle*radian)+y0*cos(angle*radian);
+    xb=x1*cos(angle*radian)-y1*sin(angle*radian);
+    yb=x1*sin(angle*radian)+y1*cos(angle*radian);
+    xc=x2*cos(angle*radian)-y2*sin(angle*radian);
+    yc=x2*sin(angle*radian)+y2*cos(angle*radian);
+    
+    setcolor(GREEN);
+	line((screenWidth/2)+xa,(screenHeight/2)-ya,(screenWidth/2)+xb,(screenHeight/2)-yb);
+	line((screenWidth/2)+xb,(screenHeight/2)-yb,(screenWidth/2)+xc,(screenHeight/2)-yc);
+	line((screenWidth/2)+xc,(screenHeight/2)-yc,(screenWidth/2)+xa,(screenHeight/2)-ya);   
+    outtextxy((screenWidth/2)+xb+10,(screenHeight/2)-yb-10, "After rotation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+	
+
+}
+///////////////////////////////////////////////scaling of line using line starting and ending points
+//transformation
+//scaling
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+void plotgraph(int screenWidth, int screenHeight){
+	
+	for(int i = screenWidth / 2, j = screenWidth / 2;i < screenWidth || j >= 0; i = i + 50, j = j - 50){
+		if(i == screenWidth / 2) {
+			setcolor(WHITE);
+			line(i,0,i,screenHeight);
+		}
+		else {
+			setcolor(WHITE);
+			line(i,0,i,screenHeight);
+			line(j,0,j,screenHeight);
+		}
+	}
+	
+	for(int i = screenHeight / 2, j = screenHeight / 2;i < screenHeight || j >= 0; i = i + 50, j = j - 50){
+		if(i == screenHeight / 2) {
+			setcolor(WHITE);
+			line(0,i,screenWidth,i);
+		}
+		else {
+			setcolor(WHITE);
+			line(0,i,screenWidth,i);
+			line(0,j,screenWidth,j);
+		}
+	}
+}
+
+int main()
+{
+
+   
+
+    float x,y,x0,y0,x1,y1,sx,sy;
+    int i;
+
+    cout<<"Enter the value of starting point (x0,y0): ";
+    cin>>x0>>y0;
+    cout<<"Enter the value of ending point (x1,y1): ";
+    cin>>x1>>y1;
+    cout<<"Enter the value of scaling factor (sx,sy): ";
+    cin>>sx>>sy;
+	 DWORD screenWidth = GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight = GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth, screenHeight, "", -3, -3);
+	plotgraph(screenWidth, screenHeight);
+
+//line before scaling
+    setcolor(YELLOW);
+    line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+    outtextxy((screenWidth/2)+x1,(screenHeight/2)-y1+10, "Before Scaling");
+
+//calculating the  coordinates
+    x0=x0*sx;
+    y0=y0*sy;
+    x1=x1*sx;
+    y1=y1*sy;
+    
+    cout<<x0<<" "<<y0<<" "<<x1<<" "<<y1;
+
+    setcolor(GREEN);
+    line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	outtextxy((screenWidth/2)+x1,(screenHeight/2)-y1+10, "After Scaling");
+	
+	delay(500);
+    getch();
+    closegraph();
+}
+///////////////////////////////////////////Scaling of line relative to a fixed point
+
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,sx,sy,xf,yf;
+	int i;
+
+	cout<<"Enter the value of starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of scaling factor (sx,sy): ";
+	cin>>sx>>sy;
+	cout<<"Enter the value of fixed or pivot point (xf,yf): ";
+	cin>>xf>>yf;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//line before scaling
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before scaling");
+	//calculating the scaled coordinates
+	x0=xf+(x0-xf)*sx;
+	y0=yf+(y0-yf)*sy;
+	x1=xf+(x1-xf)*sx;
+	y1=yf+(y1-yf)*sy;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After scaling");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+
+    //drawing the pivot point as filled circle for visualization
+    setfillstyle(SOLID_FILL,YELLOW);
+    setcolor(YELLOW);
+    circle((screenWidth/2)+xf,(screenHeight/2)-yf,3);
+    outtextxy((screenWidth/2)+xf+5,(screenHeight/2)-yf+5, "pivot(fixed point)");
+    floodfill((screenWidth/2)+xf,(screenHeight/2)-yf,YELLOW);
+    
+	getch();
+	closegraph();
+}
+///////////////////////////////////////DDA //scaling 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,dx,dy,XIncrement,YIncrement,step,sx,sy;
+	
+	
+	
+	//dda algorithm
+	
+	
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of scaling factor (sx,sy): ";
+	cin>>sx>>sy;
+	
+	dx=abs(x1-x0);
+	dy=abs(y1-y0);
+	
+	if(dx>dy)
+	{
+		step=dx;
+	}
+	else
+	{
+		step=dy;
+	}
+	
+	XIncrement = (x1-x0)/step;
+	YIncrement = (y1-y0)/step;
+	
+	x=x0;
+	y=y0;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+//	cout<<"x\ty"<<endl;	
+    
+    for(int i=0;i<=step;i++)
+    {
+    
+        putpixel((screenWidth/2)+((int) (x+0.5)),(screenHeight/2)-((int)(y+0.5)),GREEN);
+        outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "original line");
+        
+        setcolor(BLUE);
+        putpixel((screenWidth/2)+((int) (x*sx+0.5)),(screenHeight/2)-((int)(y*sy+0.5)),GREEN);
+        outtextxy((screenWidth/2)+x1*sx+10,(screenHeight/2)-y1*sy-10, "scaled line");
+        outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    	x=x+XIncrement;
+    	y=y+YIncrement;
+	}
+    
+	getch();
+	closegraph();
+	
+
+}
+////////////////////////////////////////scaling of circle 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	
+	float r,xc,yc,sx,sy;
+	int i;
+
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	cout<<"Enter the value of scaling factor (sx): ";
+	cin>>sx;
+
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//circle before scaling
+	setcolor(BLUE);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	
+	
+    outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "Before scaling");
+	//calculating the scaled coordinates
+	//xc=xc*sx;
+	//yc=yc*sy;
+      r=r*sx;
+	setcolor(GREEN);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	
+    outtextxy((screenWidth/2)+xc+60,(screenHeight/2)-yc-10, "After scaling");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+/////////////////////////////////////Scaling of triangle 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,x2,y2,sx,sy;
+	int i;
+
+	cout<<"Enter the value of first point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of second point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of third point (x2,y2): ";
+	cin>>x2>>y2;
+	cout<<"Enter the value of scaling factor (sx,sy): ";
+	cin>>sx>>sy;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//triangle before scaling
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before scaling");
+	//calculating the scaled coordinates
+	x0=x0*sx;
+	y0=y0*sy;
+	x1=x1*sx;
+	y1=y1*sy;
+	x2=x2*sx;
+	y2=y2*sy;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After scaling");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+////////////////////////////////////Scaling of triangle relative to a fixed point
+
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,x2,y2,sx,sy,xf,yf;
+	int i;
+
+	cout<<"Enter the value of first point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of second point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of third point (x2,y2): ";
+	cin>>x2>>y2;
+	cout<<"Enter the value of scaling factor (sx,sy): ";
+	cin>>sx>>sy;
+	cout<<"Enter the value of fixed or pivot point (xf,yf): ";
+	cin>>xf>>yf;
+
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//line before translation
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before scaling");
+	//calculating the translated coordinates
+    x0=xf+(x0-xf)*sx;
+	y0=yf+(y0-yf)*sy;
+	x1=xf+(x1-xf)*sx;
+	y1=yf+(y1-yf)*sy;
+	x2=xf+(x2-xf)*sx;
+	y2=yf+(y2-yf)*sy;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After scaling");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    //drawing the pivot point as filled circle for visualization
+    setfillstyle(SOLID_FILL,YELLOW);
+    setcolor(YELLOW);
+    circle((screenWidth/2)+xf,(screenHeight/2)-yf,3);
+    outtextxy((screenWidth/2)+xf+5,(screenHeight/2)-yf+5, "pivot(fixed point)");
+    floodfill((screenWidth/2)+xf,(screenHeight/2)-yf,YELLOW);
+    
+	getch();
+	closegraph();
+}
+//////////////////////////////////////////////////Translationsimple line 
+//translation
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,tx,ty;
+	int i;
+
+	cout<<"Enter the value of starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of translation factor (tx,ty): ";
+	cin>>tx>>ty;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//line before translation
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before translation");
+	//calculating the translated coordinates
+	x0=x0+tx;
+	y0=y0+ty;
+	x1=x1+tx;
+	y1=y1+ty;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After translation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+//////////////////////////////////////////DDA //translation
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,x0,y0,x1,y1,dx,dy,XIncrement,YIncrement,step,tx,ty;
+	
+	
+	
+	//dda algorithm
+	
+	
+	cout<<"Enter the starting point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the ending point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of translation factor (tx,ty): ";
+	cin>>tx>>ty;
+	
+	dx=abs(x1-x0);
+	dy=abs(y1-y0);
+	
+	if(dx>dy)
+	{
+		step=dx;
+	}
+	else
+	{
+		step=dy;
+	}
+	
+	XIncrement = (x1-x0)/step;
+	YIncrement = (y1-y0)/step;
+	
+	x=x0;
+	y=y0;
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+//	cout<<"x\ty"<<endl;	
+    
+    for(int i=0;i<=step;i++)
+    {
+        putpixel((screenWidth/2)+((int) (x+0.5)),(screenHeight/2)-((int)(y+0.5)),GREEN);
+        
+        outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "original line");
+        
+        setcolor(BLUE);
+        putpixel((screenWidth/2)+((int) (x+tx+0.5)),(screenHeight/2)-((int)(y+ty+0.5)),BLUE); //translation with translation factor
+        outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "Translated line");
+        
+        outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+    	x=x+XIncrement;
+    	y=y+YIncrement;
+	}
+    
+	getch();
+	closegraph();
+	
+
+}
+///////////////////////////////////////////////Translation of circle 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	
+	float r,xc,yc,tx,ty;
+	int i;
+
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	cout<<"Enter the value of translation factor (tx,ty): ";
+	cin>>tx>>ty;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//line before translation
+	setcolor(BLUE);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	
+	
+    outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "Before translation");
+	//calculating the translated coordinates
+	xc=xc+tx;
+	yc=yc+ty;
+
+	setcolor(GREEN);
+	circle((screenWidth/2)+xc,(screenHeight/2)-yc,r);
+	
+    outtextxy((screenWidth/2)+xc+60,(screenHeight/2)-yc-10, "After translation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+/////////////////////////////////////////midpoint circle//translation 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	float x,y,r,xc,yc,x1,y1,dx,dy,pk,tx,ty;
+	cout<<"Enter the value of radius r : ";
+	cin>>r;
+	cout<<"Enter the value of center point (xc,yc): ";
+	cin>>xc>>yc;
+	cout<<"Enter the value of translation factor (tx,ty): ";
+	cin>>tx>>ty;
+	x=0;
+	y=r;
+	
+	if(r- (int)r==0.0)
+	{
+		pk=1-r;          //initial value of decision parameter pk
+	}
+	else
+	{
+		pk=(5.0/4.0-r);
+	}
+	//graphics driver
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+	
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+	
+	
+//	cout<<"x\ty"<<endl;	
+    
+    while(x<=y)
+    {
+        setcolor(GREEN);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc+x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc+y),GREEN);
+        putpixel((screenWidth/2)+(xc-x),(screenHeight/2)-(yc-y),GREEN);
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc+x),GREEN);  
+        putpixel((screenWidth/2)+(xc+y),(screenHeight/2)-(yc-x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc+x),GREEN);
+        putpixel((screenWidth/2)+(xc-y),(screenHeight/2)-(yc-x),GREEN);
+        
+        //translation
+        putpixel((screenWidth/2)+(xc+x+tx),(screenHeight/2)-(yc+y+ty),BLUE);
+        putpixel((screenWidth/2)+(xc+x+tx),(screenHeight/2)-(yc-y+ty),BLUE);
+        putpixel((screenWidth/2)+(xc-x+tx),(screenHeight/2)-(yc+y+ty),BLUE);
+        putpixel((screenWidth/2)+(xc-x+tx),(screenHeight/2)-(yc-y+ty),BLUE);
+        putpixel((screenWidth/2)+(xc+y+tx),(screenHeight/2)-(yc+x+ty),BLUE);  
+        putpixel((screenWidth/2)+(xc+y+tx),(screenHeight/2)-(yc-x+ty),BLUE);
+        putpixel((screenWidth/2)+(xc-y+tx),(screenHeight/2)-(yc+x+ty),BLUE);
+        putpixel((screenWidth/2)+(xc-y+tx),(screenHeight/2)-(yc-x+ty),BLUE);
+        
+        if(pk<0)
+        {
+        	x=x+1;
+        	y=y;
+        	pk=pk+2*x+1;
+		}
+		else
+		{
+			x=x+1;
+        	y=y-1;
+        	pk=pk+2*x+1-2*y;
+		}
+	
+	}
+	
+    outtextxy((screenWidth/2)+xc,(screenHeight/2)-yc+10, "before translation");
+   
+    
+    setcolor(BLUE);
+    outtextxy((screenWidth/2)+xc+x+tx+10,(screenHeight/2)-yc+y+ty-10, "after translation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+	getch();
+	closegraph();
+	
+
+}
+/////////////////////////////////////////Translation of rectangle 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,tx,ty;
+	int i;
+
+	cout<<"Enter the value of first point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of second point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of translation factor (tx,ty): ";
+	cin>>tx>>ty;
+
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//line before translation
+	setcolor(RED);
+	rectangle((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before translation");
+	//calculating the translated coordinates
+	x0=x0+tx;
+	y0=y0+ty;
+	x1=x1+tx;
+	y1=y1+ty;
+
+	setcolor(GREEN);
+	rectangle((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After translation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
+///////////////////////////////////////////////////Translation of triangle 
+#include<bits/stdc++.h>
+#include<graphics.h>
+using namespace std;
+int main(){
+	
+	
+	float x,y,x0,y0,x1,y1,x2,y2,tx,ty;
+	int i;
+
+	cout<<"Enter the value of first point (x0,y0): ";
+	cin>>x0>>y0;
+	cout<<"Enter the value of second point (x1,y1): ";
+	cin>>x1>>y1;
+	cout<<"Enter the value of third point (x2,y2): ";
+	cin>>x2>>y2;
+	cout<<"Enter the value of translation factor (tx,ty): ";
+	cin>>tx>>ty;
+
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"c:\\tc\\bgi");
+
+	//window size measurement and initialization
+	DWORD screenWidth=GetSystemMetrics(SM_CXSCREEN);
+	DWORD screenHeight=GetSystemMetrics(SM_CYSCREEN);
+	initwindow(screenWidth,screenHeight,"",-3,-3);
+	
+	//graph plotting function call
+	plotgraph(screenWidth,screenHeight);
+
+	//line before translation
+	setcolor(BLUE);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x0,(screenHeight/2)-y0+10, "Before translation");
+	//calculating the translated coordinates
+	x0=x0+tx;
+	y0=y0+ty;
+	x1=x1+tx;
+	y1=y1+ty;
+	x2=x2+tx;
+	y2=y2+ty;
+
+	setcolor(GREEN);
+	line((screenWidth/2)+x0,(screenHeight/2)-y0,(screenWidth/2)+x1,(screenHeight/2)-y1);
+	line((screenWidth/2)+x1,(screenHeight/2)-y1,(screenWidth/2)+x2,(screenHeight/2)-y2);
+	line((screenWidth/2)+x2,(screenHeight/2)-y2,(screenWidth/2)+x0,(screenHeight/2)-y0);
+	
+    outtextxy((screenWidth/2)+x1+10,(screenHeight/2)-y1-10, "After translation");
+    outtextxy((screenWidth/2)+5,(screenHeight/2)+5, "(0,0)");
+
+	getch();
+	closegraph();
+}
